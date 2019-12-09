@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>592261168500-aistc5fq4245me5ntmr9k03f3i2ifq1a.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.592261168500-aistc5fq4245me5ntmr9k03f3i2ifq1a</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA7xG7-86zx6SiH0jFAKiAOT6D4Ku19Fq0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>592261168500</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>fr.maiano.lbc-technicaltest</string>
+	<key>PROJECT_ID</key>
+	<string>weatherdisplayerlbc</string>
+	<key>STORAGE_BUCKET</key>
+	<string>weatherdisplayerlbc.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:592261168500:ios:a01f47192340d87edc8021</string>
+	<key>DATABASE_URL</key>
+	<string>https://weatherdisplayerlbc.firebaseio.com</string>
+</dict>
+</plist>
