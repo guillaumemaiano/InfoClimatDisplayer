@@ -13,6 +13,8 @@ target 'WeatherDisplayerLBC' do
 	# Pods for PodTest
 	pod 'Fabric', '~> 1.10.2'
 	pod 'Crashlytics', '~> 3.14.0'
+	# I like Dropdowns
+	pod 'SwiftyDrop'
 
   target 'WeatherDisplayerLBCTests' do
     inherit! :search_paths
