@@ -12,6 +12,8 @@
 		817500B93A58D14E8C3F159D /* Pods_WeatherDisplayerLBC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1762CBD410ADF8CE3ECB229C /* Pods_WeatherDisplayerLBC.framework */; };
 		B622004C23A29F3B00874B34 /* WeatherStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B622004B23A29F3B00874B34 /* WeatherStoreTests.swift */; };
 		B622004E23A29FAA00874B34 /* WeatherStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B622004D23A29FAA00874B34 /* WeatherStore.swift */; };
+		B622005223A2A4C300874B34 /* WeatherRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B622005123A2A4C300874B34 /* WeatherRouterTests.swift */; };
+		B622005423A2A53E00874B34 /* WeatherRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B622005323A2A53E00874B34 /* WeatherRouter.swift */; };
 		B6536DAF23981B180068AD57 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6536DAE23981B180068AD57 /* AppDelegate.swift */; };
 		B6536DB123981B180068AD57 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6536DB023981B180068AD57 /* SceneDelegate.swift */; };
 		B6536DB623981B180068AD57 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B6536DB423981B180068AD57 /* Main.storyboard */; };
@@ -49,6 +51,8 @@
 		ADB2F80239D84182369DD020 /* Pods-WeatherDisplayerLBCTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WeatherDisplayerLBCTests.debug.xcconfig"; path = "Target Support Files/Pods-WeatherDisplayerLBCTests/Pods-WeatherDisplayerLBCTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B622004B23A29F3B00874B34 /* WeatherStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherStoreTests.swift; sourceTree = "<group>"; };
 		B622004D23A29FAA00874B34 /* WeatherStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherStore.swift; sourceTree = "<group>"; };
+		B622005123A2A4C300874B34 /* WeatherRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRouterTests.swift; sourceTree = "<group>"; };
+		B622005323A2A53E00874B34 /* WeatherRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRouter.swift; sourceTree = "<group>"; };
 		B6536DAB23981B180068AD57 /* WeatherDisplayerLBC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherDisplayerLBC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6536DAE23981B180068AD57 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B6536DB023981B180068AD57 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -139,6 +143,7 @@
 				B6536DC523981B1A0068AD57 /* WeatherDisplayerLBCTests.swift */,
 				B6536DC723981B1A0068AD57 /* Info.plist */,
 				B622004B23A29F3B00874B34 /* WeatherStoreTests.swift */,
+				B622005123A2A4C300874B34 /* WeatherRouterTests.swift */,
 			);
 			path = WeatherDisplayerLBCTests;
 			sourceTree = "<group>";
@@ -156,6 +161,7 @@
 			isa = PBXGroup;
 			children = (
 				B622004D23A29FAA00874B34 /* WeatherStore.swift */,
+				B622005323A2A53E00874B34 /* WeatherRouter.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -417,6 +423,7 @@
 				B622004E23A29FAA00874B34 /* WeatherStore.swift in Sources */,
 				B6536DAF23981B180068AD57 /* AppDelegate.swift in Sources */,
 				B6536DB123981B180068AD57 /* SceneDelegate.swift in Sources */,
+				B622005423A2A53E00874B34 /* WeatherRouter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,6 +433,7 @@
 			files = (
 				B622004C23A29F3B00874B34 /* WeatherStoreTests.swift in Sources */,
 				B6536DC623981B1A0068AD57 /* WeatherDisplayerLBCTests.swift in Sources */,
+				B622005223A2A4C300874B34 /* WeatherRouterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
