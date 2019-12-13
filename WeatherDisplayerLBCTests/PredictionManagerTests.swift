@@ -105,11 +105,7 @@ class PredictionManagerTests: PredictionManagerBaseTests {
         // then
         wait(for: [expectation], timeout: 5)
     }
-}
 
-// multiple small test classes can run in parallel
-class PredictionManagerOutdatedTests: PredictionManagerBaseTests {
-    
     func testWeatherGrabber_PredictionManager_RequestUpdate_Outdated() {
         // given
         let store = WeatherStore()

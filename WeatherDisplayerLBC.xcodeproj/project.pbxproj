@@ -21,6 +21,8 @@
 		B6536DBB23981B190068AD57 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B6536DB923981B190068AD57 /* LaunchScreen.storyboard */; };
 		B6536DC623981B1A0068AD57 /* WeatherDisplayerLBCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6536DC523981B1A0068AD57 /* WeatherDisplayerLBCTests.swift */; };
 		B6536DD123981B1A0068AD57 /* WeatherDisplayerLBCUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6536DD023981B1A0068AD57 /* WeatherDisplayerLBCUITests.swift */; };
+		B6728CFC23A3C30A00117886 /* Prediction.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6728CFB23A3C30A00117886 /* Prediction.swift */; };
+		B6728CFE23A3C39D00117886 /* PredictionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6728CFD23A3C39D00117886 /* PredictionTests.swift */; };
 		B6A36792239EAD8700F772FB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B6A36791239EAD8700F772FB /* GoogleService-Info.plist */; };
 		B6DA50F523A2F0650087D641 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6DA50F423A2F0650087D641 /* Constants.swift */; };
 		B6DA50F723A2F3B60087D641 /* PredictionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6DA50F623A2F3B60087D641 /* PredictionManager.swift */; };
@@ -73,6 +75,8 @@
 		B6536DD023981B1A0068AD57 /* WeatherDisplayerLBCUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDisplayerLBCUITests.swift; sourceTree = "<group>"; };
 		B6536DD223981B1A0068AD57 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B6536E1B23981BC70068AD57 /* Rules.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Rules.md; sourceTree = "<group>"; };
+		B6728CFB23A3C30A00117886 /* Prediction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prediction.swift; sourceTree = "<group>"; };
+		B6728CFD23A3C39D00117886 /* PredictionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionTests.swift; sourceTree = "<group>"; };
 		B6A36791239EAD8700F772FB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B6DA50F423A2F0650087D641 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		B6DA50F623A2F3B60087D641 /* PredictionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionManager.swift; sourceTree = "<group>"; };
@@ -158,6 +162,7 @@
 				B622004B23A29F3B00874B34 /* WeatherStoreTests.swift */,
 				B622005123A2A4C300874B34 /* WeatherRouterTests.swift */,
 				B6DA50FF23A2F5C40087D641 /* PredictionManagerTests.swift */,
+				B6728CFD23A3C39D00117886 /* PredictionTests.swift */,
 			);
 			path = WeatherDisplayerLBCTests;
 			sourceTree = "<group>";
@@ -174,6 +179,7 @@
 		B6A3678F239EA21F00F772FB /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				B6728CFB23A3C30A00117886 /* Prediction.swift */,
 				B622004D23A29FAA00874B34 /* WeatherStore.swift */,
 				B622005323A2A53E00874B34 /* WeatherRouter.swift */,
 				B6DA50F823A2F3EF0087D641 /* PredictionManager */,
@@ -454,6 +460,7 @@
 				B6DA50F723A2F3B60087D641 /* PredictionManager.swift in Sources */,
 				B6536DAF23981B180068AD57 /* AppDelegate.swift in Sources */,
 				B6536DB123981B180068AD57 /* SceneDelegate.swift in Sources */,
+				B6728CFC23A3C30A00117886 /* Prediction.swift in Sources */,
 				B622005423A2A53E00874B34 /* WeatherRouter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -464,6 +471,7 @@
 			files = (
 				B622004C23A29F3B00874B34 /* WeatherStoreTests.swift in Sources */,
 				B6536DC623981B1A0068AD57 /* WeatherDisplayerLBCTests.swift in Sources */,
+				B6728CFE23A3C39D00117886 /* PredictionTests.swift in Sources */,
 				B6DA510023A2F5C40087D641 /* PredictionManagerTests.swift in Sources */,
 				B622005223A2A4C300874B34 /* WeatherRouterTests.swift in Sources */,
 			);
