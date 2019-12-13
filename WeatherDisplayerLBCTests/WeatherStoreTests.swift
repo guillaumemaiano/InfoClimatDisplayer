@@ -12,17 +12,22 @@ import XCTest
 class WeatherStoreTests: XCTestCase {
     let folderPath = NSTemporaryDirectory() + "FileTests"
     
-    override func setUp() {
-        super.setUp()
-        do {
-            let fileManager = FileManager.default
-            try fileManager.removeItem(atPath: folderPath)
-            try fileManager.createDirectory(atPath: folderPath, withIntermediateDirectories: false, attributes: nil)
-        } catch let error {
-            XCTFail("Test setup failed \(error)")
-        }
-        
-    }
+     override func setUp() {
+           super.setUp()
+           // destroy any datafile
+           do {
+               let fileManager = FileManager.default
+               if fileManager.fileExists(atPath: folderPath)
+               {
+                   try fileManager.removeItem(atPath: folderPath)
+               }
+
+               try fileManager.createDirectory(atPath: folderPath, withIntermediateDirectories: false, attributes: nil)
+           } catch let error {
+               XCTFail("Test setup failed \(error)")
+           }
+           
+       }
     
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.

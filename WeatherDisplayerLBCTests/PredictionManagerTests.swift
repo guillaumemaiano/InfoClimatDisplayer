@@ -9,7 +9,7 @@
 import XCTest
 @testable import WeatherDisplayerLBC
 
-class PredictionManagerTests: XCTestCase {
+class PredictionManagerBaseTests: XCTestCase {
     
     override func setUp() {
         let fs = FileManager.default
@@ -24,12 +24,13 @@ class PredictionManagerTests: XCTestCase {
             XCTFail("Couldn't remove file")
         }
     }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-    
-    func testWeatherGrabber_PredictionManager_StartsNicely() {
+}
+
+class PredictionManagerSetupTests: PredictionManagerBaseTests {
+    // There is a trick in the name
+    // XCTests run (by default) in aphanumerical order, and since this tests the start of the singleton
+    // it needs to run first hence the addition of "Always"
+    func testWeatherGrabber_PredictionManager_AlwaysStartsNicely() {
         // given
         let manager = PredictionManager.shared
         // when
@@ -55,4 +56,50 @@ class PredictionManagerTests: XCTestCase {
         wait(for: [expectation], timeout: 5)
         
     }
+}
+
+class PredictionManagerTests: PredictionManagerBaseTests {
+    
+    func testWeatherGrabber_PredictionManager_RequestUpdate_DoesNotError() {
+         // given
+         let manager = PredictionManager.shared
+         let expectation = XCTestExpectation(description: "Update runs")
+         // when
+         
+         manager.requestUpdate() {
+             data, error in
+             // then
+             XCTAssertNil(error, "update should not respond with an error")
+             expectation.fulfill()
+         }
+         // then
+         wait(for: [expectation], timeout: 5)
+     }
+
+    func testWeatherGrabber_PredictionManager_RequestUpdate_RunsOffline() {
+               // given
+               let store = WeatherStore()
+               let dataString = UUID().uuidString
+               let encoder = PredictionsStoreEncoder()
+               var expectationString: String = ""
+               // simulate a previous successful request dating 5 seconds ago
+               let predictions = PredictionStore(requestDate: Date().addingTimeInterval(-5), prediction: "\(dataString)")
+               do {
+                   let contents = try encoder.encode(predictions)
+                   expectationString = String(data: contents, encoding: .utf8) ?? ""
+                   store.storeData(dataString: expectationString) {}
+                   
+               } catch {
+                   XCTFail("encoding failed")
+               }
+               let manager = PredictionManager.shared
+               // when
+               manager.requestUpdate() {
+                   data, error in
+                   print("error: \(String(describing: error))data: \(String(describing: data))")
+                   // then
+                   XCTAssertEqual(dataString, data, "data from file should correspond to data stored prior")
+               }
+           }
+    
 }
