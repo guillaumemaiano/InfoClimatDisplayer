@@ -46,7 +46,9 @@ class PredictionManager {
                 if let content: String = contents {
                     let decoder = PredictionsStoreDecoder()
                     if let jsonPredictions = try? decoder.decode(PredictionStore.self, from: content.data(using: .utf8)!) {
+                        print("----\(Date())\n----\(jsonPredictions.requestDate)\n--->\(jsonPredictions.prediction)\n")
                         self.lastRefreshDate = jsonPredictions.requestDate
+                        print("\(Date().debugDescription)\n \(self.lastRefreshDate.debugDescription)")
                         if self.needsRefresh {
                             self.refreshData(store: store, completionHandler: completionHandler)
                         } else {
@@ -182,4 +184,11 @@ class PredictionManager {
         }
         return strippedJSONString
     }
+    
+       /**
+            Testing requires the ability to reset.
+        */
+       func forceReset() {
+           lastRefreshDate = nil
+       }
 }
