@@ -15,6 +15,33 @@ class PredictionManager {
     // 5 minutes are an acceptable staleness duration
     private let staleInterval: TimeInterval = 300
     private var isUpdating: Bool = false
+    // no point pulling CLLocation here
+    private var location: String? = nil
+    
+    // constants for readability
+    private static let LATITUDE: String = LL.latitude.rawValue
+    private static let LONGITUDE: String = LL.longitude.rawValue
+    private enum LL: String {
+        case latitude = "latitude"
+        case longitude = "longitude"
+    }
+    
+    private struct GFSIC_Domain {
+        static let maximumLatitude: Double = 55.2
+        static let minimumLatitude: Double = 34.7534
+        static let maximumLongitude: Double = 15.0
+        static let minimumLongitude: Double = -15
+    }
+    
+    // under no circumstance add option s to the pattern specifier
+    // it would turn the latitude minute separator (the dot) in a line terminator matcher
+    // http://userguide.icu-project.org/strings/regexp
+    private static let pattern = #"""
+    (?xi)
+    (?<\#(LATITUDE)> ([0-9]{1,2}[.][0-9]{0,5}))
+    [,]
+    (?<\#(LONGITUDE)> ([-]?[0-9]{1,2}[.][0-9]{0,5}))
+    """#
     
     // MARK: - Properties
     static let shared = PredictionManager()
@@ -46,7 +73,6 @@ class PredictionManager {
                 if let content: String = contents {
                     let decoder = PredictionsStoreDecoder()
                     if let jsonPredictions = try? decoder.decode(PredictionStore.self, from: content.data(using: .utf8)!) {
-                        print("----\(Date())\n----\(jsonPredictions.requestDate)\n--->\(jsonPredictions.prediction)\n")
                         self.lastRefreshDate = jsonPredictions.requestDate
                         print("\(Date().debugDescription)\n \(self.lastRefreshDate.debugDescription)")
                         if self.needsRefresh {
@@ -75,7 +101,7 @@ class PredictionManager {
     
     private func refreshData(store: WeatherStore,
                              completionHandler: @escaping (String?, Error?) -> Void) {
-        let router = WeatherRouter(url: Constants.Endpoint.weatherServer())
+        let router = WeatherRouter(url: Constants.Endpoint.weatherServer(ll: location))
         router.fetch {
             if let data: Data = router.weatherData.data(using: .utf8) {
                 self.verifyRequest(data: data) {
@@ -177,18 +203,85 @@ class PredictionManager {
                 ),
                 let validString = String(data: backToData,
                                          encoding: String.Encoding.ascii) {
-                    strippedJSONString = validString
-              }
+                strippedJSONString = validString
+            }
         } catch let conversionError {
             print(conversionError.localizedDescription)
         }
         return strippedJSONString
     }
     
-       /**
-            Testing requires the ability to reset.
-        */
-       func forceReset() {
-           lastRefreshDate = nil
-       }
+    func changeLocation(location: String) -> String? {
+        
+        // reset before we do anything
+        self.location = nil
+        // This matters because all data transmitted is limited to the GFS-IC domain, which has a 15degree longitudinal span (-15 to 15) around Notre Dame de Paris and a [34.7534 - 55.2] longitudinal range.
+        // validate the string with a basic pattern: "[0-9]{1,2}.[0-9]{,5},[0-9]{1,2}.[0-9]{,5}"
+        do {
+            let regex = try NSRegularExpression(pattern: Self.pattern)
+            let nsrange = NSRange(location.startIndex..<location.endIndex,
+                                  in: location)
+            if let match = regex.firstMatch(in: location,
+                                            options: [],
+                                            range: nsrange)
+            {
+                var hasLatitudeIssue = false
+                var hasLongitudeIssue = false
+                for component in [Self.LATITUDE, Self.LONGITUDE] {
+                    let nsrange = match.range(withName: component)
+                    if nsrange.location != NSNotFound,
+                        let range = Range(nsrange, in: location)
+                    {
+                        // debug
+                        print("\(component): \(location[range])")
+                        // 0.0 to avoid potential linting nagging
+                        // we know it's valid because we're using a match result
+                        let locationElement: Double = Double(String(location[range])) ?? 0.0
+                        switch component {
+                        case Self.LATITUDE:
+                            if locationElement < GFSIC_Domain.maximumLatitude // not further than Poland
+                                && locationElement > GFSIC_Domain.minimumLatitude // mid-Atlantic
+                            {
+                                print("we're within the information-rich latitudes")
+                            } else
+                            {
+                                // we're out of the GFS-IC zone, we'll reset location
+                                hasLatitudeIssue = true
+                            }
+                        case Self.LONGITUDE:
+                            if locationElement > GFSIC_Domain.minimumLongitude // mid Baltic Sea
+                                && locationElement < GFSIC_Domain.maximumLongitude // further than Malta
+                            {
+                                print("we're within the information-rich longitudes")
+                            } else
+                            {
+                                // we're out of the GFS-IC zone, we'll reset location
+                                hasLongitudeIssue = true
+                            }
+                        default:
+                            fatalError("Failure, regexp yielded unknown component, but matcher wasn't updated!")
+                        }
+                    }
+                }
+                // if out of the GFS-IC domain, reset
+                if hasLatitudeIssue || hasLongitudeIssue {
+                    print("\n\n⚠️\nnot within domain\n latitude issue: \(hasLatitudeIssue), longitude issue:\(hasLongitudeIssue)\n\n")
+                }
+                // if within the GFS-IC domain, assign
+                else {
+                    self.location = location
+                }
+            }
+        } catch {
+            print("Hardcoded regexp invalid. Programmer needs coffee.")
+        }
+        return self.location
+    }
+    
+    /**
+     Testing requires the ability to reset.
+     */
+    func forceReset() {
+        lastRefreshDate = nil
+    }
 }

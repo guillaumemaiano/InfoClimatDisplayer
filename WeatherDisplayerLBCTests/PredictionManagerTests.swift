@@ -141,3 +141,80 @@ class PredictionManagerTests: PredictionManagerBaseTests {
     }
     
 }
+
+class PredictionManagerLocationTests: XCTestCase {
+    
+    func testWeatherGrabber_PredictionManager_ChangeLocation_IncompatibleText_ShouldFail() {
+        // given
+        let randomIncompatibleText = "..##\(UUID())"
+        let predictionManager = PredictionManager.shared
+        // when
+        let setLocation =  predictionManager.changeLocation(location: randomIncompatibleText)
+        // then
+        XCTAssertNil(setLocation, "Prediction Manager should invalidate its known location, incorrect argument")
+    }
+
+    // 55.7558° N, 37.6173° E is out of the GFS-IC zone (too high, too east)
+    func testWeatherGrabber_PredictionManager_ChangeLocation_Moscow_ShouldFail() {
+        // given
+        let predictionManager = PredictionManager.shared
+        // when
+        let setLocation =  predictionManager.changeLocation(location: "55.7558,37.6173")
+        // then
+        XCTAssertNil(setLocation, "Prediction Manager should invalidate its known location, Moscow out of scope")
+    }
+    
+    // 40.7128° N, 74.0060° W is out of the GFS-IC zone (too low, too west)
+    func testWeatherGrabber_PredictionManager_ChangeLocation_NewYork_ShouldFail() {
+        // given
+        let predictionManager = PredictionManager.shared
+        // when
+        let setLocation =  predictionManager.changeLocation(location: "40.7128,-74.0060")
+        // then
+        XCTAssertNil(setLocation, "Prediction Manager should invalidate its known location, NY out of scope")
+    }
+    
+    // Desroches Island, Seychelles: -5.694821, 53.651047
+    func testWeatherGrabber_PredictionManager_ChangeLocation_DesrochesFourSeasonsSeychelles_ShouldFail() {
+        // given
+        let seychellesDesrochesFourSeasonsLocation = "-5.694821, 53.651047"
+        let predictionManager = PredictionManager.shared
+        // when
+        let setLocation =  predictionManager.changeLocation(location: seychellesDesrochesFourSeasonsLocation)
+        // then
+        XCTAssertNil(setLocation, "Prediction Manager should invalidate its known location, Seychelles out of scope")
+    }
+    
+    // Irish sea: 53.651047,-5.694821
+    func testWeatherGrabber_PredictionManager_ChangeLocation_IrishSea_ShouldSucceed() {
+        // given
+        let irishSeaLocation = "53.65104,-5.69482"
+        let predictionManager = PredictionManager.shared
+        // when
+        let setLocation =  predictionManager.changeLocation(location: irishSeaLocation)
+        // then
+        XCTAssertEqual(setLocation, irishSeaLocation, "Prediction Manager should have updated its location to the Irish Sea: \(irishSeaLocation)")
+    }
+    
+    // 48.3904° N, -4.4861° W is inside the GFS-IC zone - it's probably raining and windy
+    func testWeatherGrabber_PredictionManager_ChangeLocation_Brest_ShouldSucceed() {
+        // given
+         let predictionManager = PredictionManager.shared
+         let brestLocation = "48.3904,-4.4861"
+         // when
+         let setLocation =  predictionManager.changeLocation(location: brestLocation)
+         // then
+         XCTAssertEqual(setLocation, brestLocation, "Prediction Manager should have updated its location to Brest: \(brestLocation)")
+    }
+    
+    // 48.3915, 4.521 is inside the GFS-IC zone - it's probably cloudy and boring
+    func testWeatherGrabber_PredictionManager_ChangeLocation_Brienne_ShouldSucceed() {
+        // given
+         let predictionManager = PredictionManager.shared
+         let brienneLocation = "48.3915,4.521"
+         // when
+         let setLocation =  predictionManager.changeLocation(location: brienneLocation)
+         // then
+         XCTAssertEqual(setLocation, brienneLocation, "Prediction Manager should have updated its location to the Castle of Brienne le Château: \(brienneLocation)")
+    }
+}

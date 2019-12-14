@@ -8,6 +8,13 @@
 
 import Foundation
 
+// AFAIK, all data available through this site is actually NWS GFS Data, free for use thanks to the USA.
+/**
+ Eg: The Global Forecast System (GFS) is a weather forecast model produced by the National Centers for Environmental Prediction (NCEP). Dozens of atmospheric and land-soil variables are available through this dataset, from temperatures, winds, and precipitation to soil moisture and atmospheric ozone concentration. The entire globe is covered by the GFS at a base horizontal resolution of 18 miles (28 kilometers) between grid points, which is used by the operational forecasters who predict weather out to 16 days in the future. Horizontal resolution drops to 44 miles (70 kilometers) between grid point for forecasts between one week and two weeks. The GFS model is a coupled model, composed of four separate models (an atmosphere model, an ocean model, a land/soil model, and a sea ice model), which work together to provide an accurate picture of weather conditions. Changes are regularly made to the GFS model to improve its performance and forecast accuracy. This dataset is run four times daily at 00z, 06z, 12z and 18z out to 192 hours with a 0.5 degree horizontal resolution and a 3 hour temporal resolution.
+ */
+// This matters because all data transmitted is limited to the GFS-IC domain, which has a 15degree longitudinal span (-15 to 15) around Notre Dame de Paris and a [34.7534 - 55.2] longitudinal range.
+// Note: it's a huge zone, extending into the Baltic sea, the Mediterranean further than Malta, and deep into the Altantic.
+// A consequence though, is that the UI must warn the user if he's moving out of the region: displaying data for Paris.
 struct Prediction: Codable, Equatable {
     // quick rundown of retrieved data structure
     // ignore the first 5 keys, they're irrelevant to the end user
