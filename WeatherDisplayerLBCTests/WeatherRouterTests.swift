@@ -23,7 +23,7 @@ class WeatherRouterTests: XCTestCase {
     }
     
     // check the network calls fetches the assigned url
-    func testWeatherGrabber_WeatherRouter_FetchWeather_CallsCorrectURL() {
+    func testWeatherUtilities_WeatherRouter_FetchWeather_CallsCorrectURL() {
         // given
         let url = URL(string: testURLString)!
         let predictionRouter = WeatherRouter(url: url)
@@ -40,7 +40,7 @@ class WeatherRouterTests: XCTestCase {
     }
     
     // check the network request was started
-    func testWeatherGrabber_WeatherRouter_FetchWeather_CallsResume() {
+    func testWeatherUtilities_WeatherRouter_FetchWeather_CallsResume() {
         // given
         let url = URL(string: testURLString)!
         let predictionRouter = WeatherRouter(url: url)
@@ -56,7 +56,7 @@ class WeatherRouterTests: XCTestCase {
     }
     
     // check data was properly retrieved
-    func testWeatherGrabber_WeatherRouter_FetchWeather_RetrievesCorrectData() {
+    func testWeatherUtilities_WeatherRouter_FetchWeather_RetrievesCorrectData() {
         // given
         let url = URL(string: testURLString)!
         let predictionRouter = WeatherRouter(url: url)
@@ -76,7 +76,7 @@ class WeatherRouterTests: XCTestCase {
     }
     
     // check error was properly recorded
-    func testWeatherGrabber_WeatherRouter_FetchWeather_RegistersError() {
+    func testWeatherUtilities_WeatherRouter_FetchWeather_RegistersError() {
         // given
         let url = URL(string: testURLString)!
         let predictionRouter = WeatherRouter(url: url)
@@ -105,7 +105,7 @@ class WeatherRouterTests: XCTestCase {
 }
 
 // MARK: SUPPORT CODE: MOCKS & PLUGS
-// MARK: testWeatherGrabber_WeatherRouter_FetchWeather_CallsCorrectURL -
+// MARK: testWeatherUtilities_WeatherRouter_FetchWeather_CallsCorrectURL -
 // dummy datatask
 class DataTaskMock: URLSessionDataTask {
     
@@ -130,7 +130,7 @@ class URLSessionMock: URLSessionProtocol {
     }
 }
 
-// MARK: testWeatherGrabber_WeatherRouter_FetchWeather_CallsResume -
+// MARK: testWeatherUtilities_WeatherRouter_FetchWeather_CallsResume -
 // mock required for resumable task testing
 class ResumableTaskURLSessionMock: URLSessionProtocol {
     
@@ -165,7 +165,7 @@ class ResumableDataTaskMock: URLSessionDataTask {
     }
 }
 
-// MARK: testWeatherGrabber_WeatherRouter_FetchWeather_RetrievesCorrectData -
+// MARK: testWeatherUtilities_WeatherRouter_FetchWeather_RetrievesCorrectData -
 // mock with customizable data/error
 class CustomizableURLSessionMock: URLSessionProtocol {
     var testData: Data? = nil
@@ -185,7 +185,7 @@ class CustomizableDataTaskMock: URLSessionDataTask {
     override init() { }
 }
 
-// MARK: testWeatherGrabber_WeatherRouter_FetchWeather_CallsCorrectURL -
+// MARK: testWeatherUtilities_WeatherRouter_FetchWeather_CallsCorrectURL -
 // dummy error
 enum TestError: Error {
     case dummyFailure

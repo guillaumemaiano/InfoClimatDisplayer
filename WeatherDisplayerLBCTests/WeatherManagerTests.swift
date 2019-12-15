@@ -11,7 +11,7 @@ import XCTest
 
 class WeatherManagerTests: XCTestCase {
     
-    func testWeatherGrabber_WeatherManager_Creation() {
+    func testWeatherUtilities_WeatherManager_Creation() {
         let weatherManager = WeatherManager.shared
         let information = weatherManager.getWeatherInformation()
     }

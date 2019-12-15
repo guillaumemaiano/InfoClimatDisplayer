@@ -34,7 +34,7 @@ class WeatherStoreTests: XCTestCase {
     }
     
     // Several related failures with clear messages tested, no point having billions of microtests
-    func testWeatherGrabber_WeatherStore_StoreData_createsFileWithContent() {
+    func testWeatherUtilities_WeatherStore_StoreData_createsFileWithContent() {
         // given
         let store = WeatherStore(pathString: folderPath)
         let expectation = XCTestExpectation(description: "Storing data creates a file")
@@ -59,7 +59,7 @@ class WeatherStoreTests: XCTestCase {
         
     }
     
-    func testWeatherGrabber_WeatherStore_ReadData_ReadsNoFile() {
+    func testWeatherUtilities_WeatherStore_ReadData_ReadsNoFile() {
         // given
         let store = WeatherStore(pathString: folderPath)
         let expectation = XCTestExpectation(description: "Reading data fails if no data")
@@ -73,7 +73,7 @@ class WeatherStoreTests: XCTestCase {
         wait(for: [expectation], timeout: 5)
     }
     
-    func testWeatherGrabber_WeatherStore_ReadData_ReadsFile() {
+    func testWeatherUtilities_WeatherStore_ReadData_ReadsFile() {
         // given
         let store = WeatherStore(pathString: folderPath)
         let filePath = "\(folderPath)/\(WeatherStore.nameString)"
