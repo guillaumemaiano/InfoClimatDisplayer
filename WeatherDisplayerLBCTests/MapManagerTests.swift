@@ -7,6 +7,7 @@
 //
 
 import XCTest
+@testable import WeatherDisplayerLBC
 
 class MapManagerTests: XCTestCase {
 
@@ -19,7 +20,10 @@ class MapManagerTests: XCTestCase {
     }
 
     func test_LocationUtilities_MapManager_Creation() {
-        
+        // given
+        let sut = MapManager()
+        // then
+        XCTAssertNotNil(sut.locationManager, "Map manager has no location manager")
     }
 
 }
