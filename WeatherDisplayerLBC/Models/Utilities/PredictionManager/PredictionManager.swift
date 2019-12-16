@@ -110,8 +110,9 @@ class PredictionManager {
                     if let verifiedData = data {
                         let encoder = PredictionsStoreEncoder()
                         // extract the useful information before actual disk write
+                        let extractedPrediction = self.extractPrediction(data: verifiedData.data(using: .utf8)!)
                         let predictions = PredictionStore(requestDate: Date(),
-                                                          prediction: self.extractPrediction(data: verifiedData.data(using: .utf8)!))
+                                                          prediction: extractedPrediction)
                         do {
                             // always stop updating after this step, whether or not it wrote to disk
                             defer {
@@ -120,7 +121,8 @@ class PredictionManager {
                             let contents = try encoder.encode(predictions)
                             store.storeData(dataString: String(data: contents, encoding: .utf8) ?? "") {
                                 self.lastRefreshDate = predictions.requestDate
-                                completionHandler(String(data: contents, encoding: .utf8) ?? "", nil)
+                                //  send back the data now that it has been written
+                                completionHandler(extractedPrediction, nil)
                             }
                             
                         } catch let storageError {
@@ -202,7 +204,7 @@ class PredictionManager {
                 options: []
                 ),
                 let validString = String(data: backToData,
-                                         encoding: String.Encoding.ascii) {
+                                         encoding: String.Encoding.utf8) {
                 strippedJSONString = validString
             }
         } catch let conversionError {

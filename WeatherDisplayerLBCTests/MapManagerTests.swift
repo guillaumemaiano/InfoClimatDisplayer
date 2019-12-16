@@ -25,5 +25,12 @@ class MapManagerTests: XCTestCase {
         // then
         XCTAssertNotNil(sut.locationManager, "Map manager has no location manager")
     }
+    
+    func test_LocationUtilities_MapManager_DelegateValid() {
+        // given
+        let sut = MapManager()
+        // then
+        XCTAssertNotNil(sut.locationManager.delegate, "Location manager has no location delegate")
+    }
 
 }
