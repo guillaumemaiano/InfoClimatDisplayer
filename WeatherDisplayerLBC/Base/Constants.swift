@@ -9,6 +9,24 @@
 import Foundation
 
 struct Constants {
+    
+    struct UI {
+        struct WeatherPredictionsTableViewNames {
+            // information cell reuse identifier
+            static let infoCellName = "infoCell"
+            // terms & conditions cell reuse identifier
+            static let tAndCCellName = "attributionCell"
+            // prediction cell reuse identifier
+            static let weatherPredictionCellName = "weatherCell"
+        }
+        
+        struct Map {
+            // we do not require high precision, but we'd like to show where we are in Europe
+            static let latitudinalMeters = 2000.0
+            static let longitudinalMeters = 2000.0
+        }
+    }
+    
     struct Endpoint {
 
         private static let publicAuthKey = "ABpQRwF%2FVnQEKVJlUyVQeQRsATQIfgYhUy9QM1s%2BVShSOV8%2BUTEAZlI8VShVeldhUH0ObVtgVGQKYVUtAXMEZQBqUDwBalYxBGtSN1N8UHsEKgFgCCgGIVM4UD5bKFU3UjRfM1EsAGBSPFUzVXtXYVBiDmhbe1RzCmhVNwFrBGIAalA0AWVWPARiUjBTfFB7BDIBNQhiBmtTN1A1WzVVNFJgXzpRZgBnUjlVMFV7V2RQaw5nW2BUZQpsVTcBZQR4AHxQTQERVikEK1JyUzZQIgQqATQIaQZq"
