@@ -24,6 +24,14 @@ struct Constants {
             static let weatherPredictionCellName = "weatherCell"
         }
         
+        struct WeatherPredictionsTableCells {
+            // Design decision
+            static let attributionHeight: Float = 120.0
+            static let predictionHeight: Float = 40.0
+            // fake calculation
+            static let informationHeight: Float = 50.0
+        }
+        
         struct Map {
             // we do not require high precision, but we'd like to show where we are in Europe
             static let latitudinalMeters = 2000.0

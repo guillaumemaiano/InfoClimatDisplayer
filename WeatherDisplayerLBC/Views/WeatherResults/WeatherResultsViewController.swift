@@ -16,6 +16,12 @@ import SwiftyDrop
 class WeatherResultsViewController: UITableViewController {
     
     private var movingToViewController = false
+    
+    private enum WeatherTableSections: Int {
+        case results = 0,
+             information,
+            attribution
+    }
 
     private let manager = MapManager()
     // will hold to the delegate til deinit
@@ -39,29 +45,67 @@ class WeatherResultsViewController: UITableViewController {
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         // we have between 2 and 3 sections active
+        // since we have no header for sections, we hardcode three sections in
         // - weather results per day time
         // - any notice of information that makes sense (out of zone, risk of ice, etc)
         // - mandatory T&C notice
-        return 1
+        return 3
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // first section has as many results as were rerieved from website
         // second section has as many results as make sense (0 to n)
         // last section has one result only
-        return 1
+        switch section {
+        case WeatherTableSections.results.rawValue:
+            // TODO: get size
+            return 0
+        case WeatherTableSections.information.rawValue:
+            // TODO: get size
+            return 0
+        case WeatherTableSections.attribution.rawValue:
+            // we never need more than one attrib cell
+            return 1
+        default:
+            return 0
+        }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.UI.WeatherPredictionsTableViewNames.tAndCCellName, for: indexPath) as? AttributionCell
-        // TODO: build something more elegant
-        cell?.textLabel?.text = "www.infoclimat.fr"
-        cell?.textLabel?.textAlignment = .center
-        // only for T&C and information cells
-        cell?.selectionStyle = .none
         return cell!
     }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        // size depends on section
+        switch indexPath.section {
+        case WeatherTableSections.results.rawValue:
+            return CGFloat(Constants.UI.WeatherPredictionsTableCells.predictionHeight)
+        case WeatherTableSections.information.rawValue:
+            // Improvement: make dynamic in order to display an appropriately-sized cell for the amount of information
+            return CGFloat(Constants.UI.WeatherPredictionsTableCells.informationHeight)
+        case WeatherTableSections.attribution.rawValue:
+            return AttributionCell.cellHeight()
+        default:
+            return 0
+        }
+    }
+
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        switch indexPath.section {
+         case WeatherTableSections.results.rawValue:
+            break
+         case WeatherTableSections.information.rawValue:
+             break
+         case WeatherTableSections.attribution.rawValue:
+            cell.backgroundView?.alpha = 0.85
+            cell.alpha = 0.85
+             break
+         default:
+             break
+         }
+    }
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 && indexPath.row == 0 {
             movingToViewController = true
