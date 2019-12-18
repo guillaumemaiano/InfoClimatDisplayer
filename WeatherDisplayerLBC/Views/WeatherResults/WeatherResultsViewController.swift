@@ -8,7 +8,11 @@
 
 import UIKit
 import MapKit
+import SwiftyDrop
 
+
+// Improvement: use CLGeocoder to reverse-geocode the location, and display it as an info cell
+// Improvement: Add slide-to-remove on info cells [requires keeping track of what information was hidden]
 class WeatherResultsViewController: UITableViewController {
     
     private var movingToViewController = false
@@ -19,20 +23,9 @@ class WeatherResultsViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let mapView = MKMapView()
-        // initially centered on my house, improvement: bind the user location and center the map on known last location
-        // maybe use the CoreLocation feature that does just that ;)
-        mapView.setRegion(MKCoordinateRegion(center:
-            CLLocationCoordinate2D(latitude: 50.640364,
-                                   longitude: 3.062058),
-                                             latitudinalMeters: Constants.UI.Map.latitudinalMeters,
-                                             longitudinalMeters: Constants.UI.Map.longitudinalMeters), animated: true)
-        mapView.showsUserLocation = true
-        mapView.showsScale = true
-        mapView.delegate = weatherMapViewDelegate
-        // Note: we don't need a MKMapViewDelegate since we don't intend to set annotations
-        // we do need CLLocationManagerDelegate and CLLocationManager
-        tableView.backgroundView = mapView
+        
+        setupRefresh()
+        setupMapView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -76,5 +69,35 @@ class WeatherResultsViewController: UITableViewController {
             // improvement: implement cancellable pushes
             navigationController?.pushViewController(AttributionWebViewController(), animated: false)
         }
+    }
+    // UIKit is O-C mostly
+    @objc private func requestDataRefresh(refreshControl: UIRefreshControl) {
+            Drop.down("lol")
+            // TODO: decide if I end refreshing now or if I wait for data return
+            refreshControl.endRefreshing()
+    }
+    
+    private func setupMapView() {
+        let mapView = MKMapView()
+        // initially centered on my house, improvement: bind the user location and center the map on known last location
+        // maybe use the CoreLocation feature that does just that ;)
+        mapView.setRegion(MKCoordinateRegion(center:
+            CLLocationCoordinate2D(latitude: 50.640364,
+                                   longitude: 3.062058),
+                                             latitudinalMeters: Constants.UI.Map.latitudinalMeters,
+                                             longitudinalMeters: Constants.UI.Map.longitudinalMeters), animated: true)
+        mapView.showsUserLocation = true
+        mapView.showsScale = true
+        mapView.delegate = weatherMapViewDelegate
+        // Note: we don't need a MKMapViewDelegate since we don't intend to set annotations
+        // we do need CLLocationManagerDelegate and CLLocationManager
+        tableView.backgroundView = mapView
+    }
+    
+    private func setupRefresh() {
+
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(requestDataRefresh), for: .valueChanged)
+        tableView.refreshControl = refreshControl
     }
 }

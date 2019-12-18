@@ -10,6 +10,10 @@ import Foundation
 
 struct Constants {
     
+    struct SettingsKeys {
+        static let validityKey = "dataValidityDuration"
+    }
+    
     struct UI {
         struct WeatherPredictionsTableViewNames {
             // information cell reuse identifier
@@ -24,6 +28,10 @@ struct Constants {
             // we do not require high precision, but we'd like to show where we are in Europe
             static let latitudinalMeters = 2000.0
             static let longitudinalMeters = 2000.0
+        }
+        
+        struct Segues {
+            static let detailsSegueId = "weatherDetailsSegue"
         }
     }
     

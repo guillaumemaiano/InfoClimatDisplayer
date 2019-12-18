@@ -49,7 +49,10 @@ class PredictionManager {
     var needsRefresh: Bool {
         get {
             if let refreshDate = lastRefreshDate {
-                let staleDate = refreshDate.addingTimeInterval(staleInterval)
+                print( SettingsManager.getStaleDuration() )
+                let minutes = SettingsManager.getStaleDuration()
+                let interval = minutes != 0 ? Double(minutes) * 60.0 : staleInterval
+                let staleDate = refreshDate.addingTimeInterval(interval)
                 let currentDate = Date()
                 // data isn't stale yet
                 return currentDate > staleDate
