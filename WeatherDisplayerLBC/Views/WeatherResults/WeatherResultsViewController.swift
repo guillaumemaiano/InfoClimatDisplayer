@@ -13,25 +13,35 @@ import SwiftyDrop
 
 // Improvement: use CLGeocoder to reverse-geocode the location, and display it as an info cell
 // Improvement: Add slide-to-remove on info cells [requires keeping track of what information was hidden]
+// Improvement: Add UIBarButtonItem (set on NavigationItem) to open in-app Settings
 class WeatherResultsViewController: UITableViewController {
     
     private var movingToViewController = false
     
     private enum WeatherTableSections: Int {
         case results = 0,
-             information,
-            attribution
+        information,
+        attribution
     }
-
+    
     private let manager = MapManager()
     // will hold to the delegate til deinit
     private let weatherMapViewDelegate = WeatherMapViewDelegate()
+    
+    private var viewModel = WeatherDisplayerViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupRefresh()
         setupMapView()
+        
+        viewModel.reloadTableViewClosure = { [weak self] () in
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+                self?.refreshControl?.endRefreshing()
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -57,12 +67,12 @@ class WeatherResultsViewController: UITableViewController {
         // second section has as many results as make sense (0 to n)
         // last section has one result only
         switch section {
-        case WeatherTableSections.results.rawValue:
-            // TODO: get size
-            return 0
-        case WeatherTableSections.information.rawValue:
-            // TODO: get size
-            return 0
+        case WeatherTableSections.results.rawValue, WeatherTableSections.information.rawValue:
+            do {
+                return try viewModel.getRows(for: section)
+              } catch {
+                  return 0
+              }
         case WeatherTableSections.attribution.rawValue:
             // we never need more than one attrib cell
             return 1
@@ -72,8 +82,48 @@ class WeatherResultsViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Constants.UI.WeatherPredictionsTableViewNames.tAndCCellName, for: indexPath) as? AttributionCell
-        return cell!
+        switch indexPath.section {
+        case WeatherTableSections.results.rawValue:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.UI.WeatherPredictionsTableViewNames.weatherPredictionCellName, for: indexPath) as? WeatherPredictionCell else {
+                fatalError("Programmer cast cell to incorrect type, check reusable ID \(Constants.UI.WeatherPredictionsTableViewNames.weatherPredictionCellName)")
+            }
+            do {
+                  let cellVM = try viewModel.getCellViewModel( at: indexPath ) as? WeatherCellViewModel
+                  
+                  cell.textLabel?.text = cellVM?.dateTime ?? ""
+                  cell.detailTextLabel?.text = cellVM?.temperature ?? ""
+              } catch {
+                // return cell emptied
+                cell.textLabel?.text = ""
+                cell.detailTextLabel?.text = ""
+                return cell
+              }
+            return cell
+        case WeatherTableSections.information.rawValue:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.UI.WeatherPredictionsTableViewNames.infoCellName, for: indexPath) as? InformationCell else {
+                fatalError("Programmer cast cell to incorrect type, check reusable ID \(Constants.UI.WeatherPredictionsTableViewNames.infoCellName)")
+            }
+            do {
+                let cellVM = try viewModel.getCellViewModel( at: indexPath ) as? InformationCellViewModel
+                
+                cell.textLabel?.text = cellVM?.title ?? ""
+                cell.detailTextLabel?.text = cellVM?.description ?? ""
+            } catch {
+              // return cell emptied
+              cell.textLabel?.text = ""
+              cell.detailTextLabel?.text = ""
+              return cell
+            }
+            return cell
+        case WeatherTableSections.attribution.rawValue:
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.UI.WeatherPredictionsTableViewNames.tAndCCellName, for: indexPath) as? AttributionCell
+                else {
+                    fatalError("Programmer cast cell to incorrect type, check reusable ID \(Constants.UI.WeatherPredictionsTableViewNames.tAndCCellName)")
+            }
+            return cell
+        default:
+            fatalError("Programmer updated cell types but not table view dispatch code")
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -90,35 +140,59 @@ class WeatherResultsViewController: UITableViewController {
             return 0
         }
     }
-
+    
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         switch indexPath.section {
-         case WeatherTableSections.results.rawValue:
+        case WeatherTableSections.results.rawValue:
             break
-         case WeatherTableSections.information.rawValue:
-             break
-         case WeatherTableSections.attribution.rawValue:
+        case WeatherTableSections.information.rawValue:
+            break
+        case WeatherTableSections.attribution.rawValue:
             cell.backgroundView?.alpha = 0.85
             cell.alpha = 0.85
-             break
-         default:
-             break
-         }
+            break
+        default:
+            break
+        }
     }
-
+    
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        if viewModel.shouldTransition(for: indexPath) {
+            return indexPath
+        } else
+        {
+            return nil
+        }
+    }
+    // Improvement: implement cancellable pushes
+    // Attribution cells transition here
+    // Information and Prediction cells transition in Will
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 && indexPath.row == 0 {
+        
+        switch indexPath.section {
+        case WeatherTableSections.results.rawValue:
+            break
+        case WeatherTableSections.information.rawValue:
+            break
+        case WeatherTableSections.attribution.rawValue:
             movingToViewController = true
             tableView.isUserInteractionEnabled = !movingToViewController
-            // improvement: implement cancellable pushes
             navigationController?.pushViewController(AttributionWebViewController(), animated: false)
+            break
+        default:
+            break
         }
+        
     }
     // UIKit is O-C mostly
     @objc private func requestDataRefresh(refreshControl: UIRefreshControl) {
-            Drop.down("lol")
-            // TODO: decide if I end refreshing now or if I wait for data return
-            refreshControl.endRefreshing()
+        
+        //            // TODO: pass action down
+        //        let action = {
+        //            DispatchQueue.main.async {
+        //                self.refreshControl?.endRefreshing()
+        //            }
+        //        }
     }
     
     private func setupMapView() {
@@ -139,7 +213,7 @@ class WeatherResultsViewController: UITableViewController {
     }
     
     private func setupRefresh() {
-
+        
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(requestDataRefresh), for: .valueChanged)
         tableView.refreshControl = refreshControl

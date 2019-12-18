@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 
+// Improvement: use this class to request a specific location from UIBarButton
 class BoundTF: UITextField {
     var changedClosure: (()->())?
     
