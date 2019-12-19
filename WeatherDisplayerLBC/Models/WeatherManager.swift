@@ -8,7 +8,8 @@
 
 import Foundation
 
-struct WeatherManager {
+// I want a class so I may bind vars
+class WeatherManager {
     
     // MARK: - Private
     private let predictionManager = PredictionManager.shared
@@ -18,10 +19,26 @@ struct WeatherManager {
     // Passing the map manager in allows better unit testing
     init(locationManager: MapManagerProtocol = MapManager()) {
         self.locationManager = locationManager
+        predictionData = [:]
+    }
+    
+    var errorClosure: (() -> Void)?
+    var weatherDataClosure: (() -> Void)?
+    
+    private (set) var predictionData: [String: Prediction] {
+        didSet {
+            weatherDataClosure?()
+        }
+    }
+    
+    private (set) var error: Error?  = nil {
+        didSet {
+            errorClosure?()
+        }
     }
     
     // Note: completionHandler useful for async unit tests (fulfill)
-    func getWeatherInformation(completionHandler: (() -> Void)? = nil) {
+     func getWeatherInformation(completionHandler: (() -> Void)? = nil) {
         
         // only request data if necessary
         if predictionManager.needsRefresh {
@@ -29,11 +46,10 @@ struct WeatherManager {
                 data, error in
                 if let data = data {
                     // extract the data from the response
-                    print(self.predictions(from: data))
+                    self.predictionData = self.predictions(from: data)
                     completionHandler?()
-                    // TODO: connect to VM in MVVM and do stuff
                 } else if let error = error {
-                    // TODO: same, for error
+                    self.error = error
                     print(error)
                 }
             }

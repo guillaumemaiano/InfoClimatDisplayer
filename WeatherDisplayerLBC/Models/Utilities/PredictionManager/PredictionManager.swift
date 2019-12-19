@@ -49,7 +49,6 @@ class PredictionManager {
     var needsRefresh: Bool {
         get {
             if let refreshDate = lastRefreshDate {
-                print( SettingsManager.getStaleDuration() )
                 let minutes = SettingsManager.getStaleDuration()
                 let interval = minutes != 0 ? Double(minutes) * 60.0 : staleInterval
                 let staleDate = refreshDate.addingTimeInterval(interval)
@@ -77,7 +76,6 @@ class PredictionManager {
                     let decoder = PredictionsStoreDecoder()
                     if let jsonPredictions = try? decoder.decode(PredictionStore.self, from: content.data(using: .utf8)!) {
                         self.lastRefreshDate = jsonPredictions.requestDate
-                        print("\(Date().debugDescription)\n \(self.lastRefreshDate.debugDescription)")
                         if self.needsRefresh {
                             self.refreshData(store: store, completionHandler: completionHandler)
                         } else {
@@ -237,8 +235,6 @@ class PredictionManager {
                     if nsrange.location != NSNotFound,
                         let range = Range(nsrange, in: location)
                     {
-                        // debug
-                        print("\(component): \(location[range])")
                         // 0.0 to avoid potential linting nagging
                         // we know it's valid because we're using a match result
                         let locationElement: Double = Double(String(location[range])) ?? 0.0

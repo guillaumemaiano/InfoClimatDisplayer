@@ -15,9 +15,13 @@ protocol WeatherDisplayCellViewModelProtocol {
 struct WeatherCellViewModel: WeatherDisplayCellViewModelProtocol {
     let dateTime: String
     let temperature: String
+    // pass the entire prediction (facilitate segue setup at the cost of minor duplication)
+    let prediction: Prediction
 }
 
 struct InformationCellViewModel: WeatherDisplayCellViewModelProtocol {
     let title: String
     let description: String
+    let level: InfoLevel
+    
 }

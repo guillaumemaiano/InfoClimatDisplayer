@@ -29,6 +29,7 @@ class WeatherResultsViewController: UITableViewController {
     private let weatherMapViewDelegate = WeatherMapViewDelegate()
     
     private var viewModel = WeatherDisplayerViewModel()
+    private var detailedPrediction: Prediction?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,8 +46,8 @@ class WeatherResultsViewController: UITableViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        navigationItem.title = "Predictions"
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "Got it", style: .done, target: nil, action: nil)
+        navigationItem.title = "Prédictions"
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "Retour à la carte", style: .done, target: nil, action: nil)
         movingToViewController = false
         tableView?.isUserInteractionEnabled = !movingToViewController
     }
@@ -63,16 +64,16 @@ class WeatherResultsViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // first section has as many results as were rerieved from website
+        // first section has as many results as were retrieved from website
         // second section has as many results as make sense (0 to n)
         // last section has one result only
         switch section {
         case WeatherTableSections.results.rawValue, WeatherTableSections.information.rawValue:
             do {
                 return try viewModel.getRows(for: section)
-              } catch {
-                  return 0
-              }
+            } catch {
+                return 0
+            }
         case WeatherTableSections.attribution.rawValue:
             // we never need more than one attrib cell
             return 1
@@ -88,16 +89,16 @@ class WeatherResultsViewController: UITableViewController {
                 fatalError("Programmer cast cell to incorrect type, check reusable ID \(Constants.UI.WeatherPredictionsTableViewNames.weatherPredictionCellName)")
             }
             do {
-                  let cellVM = try viewModel.getCellViewModel( at: indexPath ) as? WeatherCellViewModel
-                  
-                  cell.textLabel?.text = cellVM?.dateTime ?? ""
-                  cell.detailTextLabel?.text = cellVM?.temperature ?? ""
-              } catch {
+                let cellVM = try viewModel.getCellViewModel( at: indexPath ) as? WeatherCellViewModel
+                
+                cell.textLabel?.text = cellVM?.dateTime ?? ""
+                cell.detailTextLabel?.text = cellVM?.temperature ?? ""
+            } catch {
                 // return cell emptied
                 cell.textLabel?.text = ""
                 cell.detailTextLabel?.text = ""
                 return cell
-              }
+            }
             return cell
         case WeatherTableSections.information.rawValue:
             guard let cell = tableView.dequeueReusableCell(withIdentifier: Constants.UI.WeatherPredictionsTableViewNames.infoCellName, for: indexPath) as? InformationCell else {
@@ -109,10 +110,10 @@ class WeatherResultsViewController: UITableViewController {
                 cell.textLabel?.text = cellVM?.title ?? ""
                 cell.detailTextLabel?.text = cellVM?.description ?? ""
             } catch {
-              // return cell emptied
-              cell.textLabel?.text = ""
-              cell.detailTextLabel?.text = ""
-              return cell
+                // return cell emptied
+                cell.textLabel?.text = ""
+                cell.detailTextLabel?.text = ""
+                return cell
             }
             return cell
         case WeatherTableSections.attribution.rawValue:
@@ -144,11 +145,10 @@ class WeatherResultsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         switch indexPath.section {
         case WeatherTableSections.results.rawValue:
-            break
+            cell.alpha = 0.7
         case WeatherTableSections.information.rawValue:
             break
         case WeatherTableSections.attribution.rawValue:
-            cell.backgroundView?.alpha = 0.85
             cell.alpha = 0.85
             break
         default:
@@ -171,6 +171,14 @@ class WeatherResultsViewController: UITableViewController {
         
         switch indexPath.section {
         case WeatherTableSections.results.rawValue:
+            do {
+                let cellViewModel = try viewModel.getCellViewModel(at: indexPath) as? WeatherCellViewModel
+                detailedPrediction = cellViewModel?.prediction
+                performSegue(withIdentifier: Constants.UI.Segues.detailsSegueId, sender: self)
+            } catch {
+                Drop.down("No data was found")
+            }
+            
             break
         case WeatherTableSections.information.rawValue:
             break
@@ -182,17 +190,14 @@ class WeatherResultsViewController: UITableViewController {
         default:
             break
         }
-        
+        DispatchQueue.main.async {
+            tableView.deselectRow(at: indexPath, animated: false)
+        }
     }
     // UIKit is O-C mostly
     @objc private func requestDataRefresh(refreshControl: UIRefreshControl) {
         
-        //            // TODO: pass action down
-        //        let action = {
-        //            DispatchQueue.main.async {
-        //                self.refreshControl?.endRefreshing()
-        //            }
-        //        }
+        viewModel.refresh()
     }
     
     private func setupMapView() {
@@ -217,5 +222,19 @@ class WeatherResultsViewController: UITableViewController {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(requestDataRefresh), for: .valueChanged)
         tableView.refreshControl = refreshControl
+    }
+    
+    // I like segues. I believe in storyboards which have clean, obvious layouts with visual design.
+    // I dislike when people use storyboards like big folders containing NIBs, which I think ruins the point of storyboards.
+    // Not using segues means I'd need a router instead of simple, Apple-friendly logic.
+    // The drawback is that I need to hold the data required for the next controller in a var, instead of having the cell pass it through.
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == Constants.UI.Segues.detailsSegueId {
+            if let destinationController = segue.destination as? DetailsViewController {
+                if let prediction = detailedPrediction {
+                    destinationController.viewModel = DetailsViewModel(prediction: prediction)
+                }
+            }
+        }
     }
 }
