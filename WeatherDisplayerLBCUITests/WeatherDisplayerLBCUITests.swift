@@ -23,13 +23,21 @@ class WeatherDisplayerLBCUITests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() {
+        func testUIon20191219() {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
+        app.launchArguments = ["enable-testing"]
         app.launch()
-
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let tablesQuery = app.tables
+        tablesQuery/*@START_MENU_TOKEN@*/.staticTexts["2019-12-20 07:00:00"]/*[[".cells.staticTexts[\"2019-12-20 07:00:00\"]",".staticTexts[\"2019-12-20 07:00:00\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.swipeDown()
+        tablesQuery/*@START_MENU_TOKEN@*/.staticTexts["2019-12-19 04:00:00"]/*[[".cells.staticTexts[\"2019-12-19 04:00:00\"]",".staticTexts[\"2019-12-19 04:00:00\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        app.navigationBars["WeatherDisplayerLBC.DetailsView"].buttons["Retour à la carte"].tap()
+            XCUIApplication().tables/*@START_MENU_TOKEN@*/.staticTexts["www.infoclimat.fr"]/*[[".cells.staticTexts[\"www.infoclimat.fr\"]",".staticTexts[\"www.infoclimat.fr\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        app.navigationBars["WeatherDisplayerLBC.AttributionWebView"].buttons["Retour à la carte"].tap()
+        tablesQuery/*@START_MENU_TOKEN@*/.staticTexts["2019-12-25 16:00:00"]/*[[".cells.staticTexts[\"2019-12-25 16:00:00\"]",".staticTexts[\"2019-12-25 16:00:00\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.swipeDown()
+                                                
+            
+            
     }
 
     func testLaunchPerformance() {
