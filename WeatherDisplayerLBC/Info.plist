@@ -17,13 +17,13 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>The application needs to know your position to warn you if you leave the cover zone.</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>The application needs to know your position to get your local weather.</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>The application needs to know your position to warn you if you leave the cover zone.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>The application needs to know your position to get your local weather.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
