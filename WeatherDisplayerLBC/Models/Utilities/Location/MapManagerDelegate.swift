@@ -13,6 +13,11 @@ class MapManagerDelegate: NSObject, CLLocationManagerDelegate {
     
     var locationStatus = "Status not determined"
     var locationFixFound = false
+    var locationUpdatedClosure: (String) ->()
+    
+    init(didUpdateLocation: @escaping (String) -> () = { _ in}) {
+        locationUpdatedClosure = didUpdateLocation
+    }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
@@ -31,7 +36,17 @@ class MapManagerDelegate: NSObject, CLLocationManagerDelegate {
                     locationFixFound = true
                 }
             }
-            
+            if let latest = locations.last {
+                let fmt = NumberFormatter()
+                fmt.numberStyle = .decimal
+                // needed because the location class expects this format for location string
+                fmt.decimalSeparator = "."
+                fmt.usesGroupingSeparator = false
+                fmt.maximumFractionDigits = 5
+                fmt.maximumSignificantDigits = 7
+                let locationString = "\(fmt.string(from: NSNumber(value: latest.coordinate.latitude)) ?? ""),\(fmt.string(from: NSNumber(value: latest.coordinate.longitude)) ?? "")"
+                locationUpdatedClosure(locationString)
+            }
         }
     }
     

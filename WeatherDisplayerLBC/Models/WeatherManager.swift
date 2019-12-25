@@ -12,13 +12,17 @@ import Foundation
 class WeatherManager {
     
     // MARK: - Private
-    private let predictionManager = PredictionManager.shared
+    private let predictionManager: PredictionManager
     private let locationManager: MapManagerProtocol
     
     // MARK: - Functions
     // Passing the map manager in allows better unit testing
-    init(locationManager: MapManagerProtocol = MapManager()) {
+    init(predictionManager: PredictionManager = PredictionManager(), locationManager: MapManagerProtocol = MapManager(delegate:
+        MapManagerDelegate(didUpdateLocation: { locationString in
+            print("Pass location string \(locationString) to prediction manager")
+        }))) {
         self.locationManager = locationManager
+        self.predictionManager = predictionManager
         predictionData = [:]
     }
     
@@ -110,4 +114,16 @@ class WeatherManager {
 
 protocol WeatherManagerDelegate {
     func didUpdateLocation(predictionLocation: String)
+}
+
+struct WMDelegate: WeatherManagerDelegate {
+    
+    private let predictionManager: PredictionManager
+
+    init(manager: PredictionManager) {
+        predictionManager = manager
+    }
+    func didUpdateLocation(predictionLocation: String) {
+        let _ = predictionManager.changeLocation(location: predictionLocation)
+    }
 }

@@ -43,9 +43,6 @@ class PredictionManager {
     (?<\#(LONGITUDE)> ([-]?[0-9]{1,2}[.][0-9]{0,5}))
     """#
     
-    // MARK: - Properties
-    static let shared = PredictionManager()
-    
     var needsRefresh: Bool {
         get {
             if let refreshDate = lastRefreshDate {
@@ -59,9 +56,6 @@ class PredictionManager {
                 return true
             }
         }
-    }
-    
-    private init() {
     }
     
     // MARK: - Methods

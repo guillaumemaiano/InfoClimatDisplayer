@@ -10,25 +10,10 @@ import Foundation
 
 class WeatherDisplayerViewModel {
     
+    static private let mf = MeasurementFormatter()
+    
     private enum CellType {
         case prediction, information
-    }
-    
-    enum WeatherDisplayerError: Error {
-        case NonExistingSection
-    }
-    
-    init() {
-        // Improvement: switch location manager to make specific requests (see BoundTF)
-        weatherManager = WeatherManager()
-        weatherManager.errorClosure = errorFetchClosure
-        weatherManager.weatherDataClosure = dataFetchClosure
-        // will silently launch an initial update
-        // there is a microscopic chance that the closure isn't yet set when it comes back
-        // in that unlikely scenario, a manual request will trigger the display anyway
-        weatherManager.getWeatherInformation() {
-            
-        }
     }
     
     private func dataFetchClosure() -> Void {
@@ -49,15 +34,18 @@ class WeatherDisplayerViewModel {
             }
         }
         buildCellModelArray[.prediction] = buildPredictionArray
+        var buildInformationModelArray: [WeatherDisplayCellViewModelProtocol] = []
         if cold {
             if freezing {
-                // we have one warning only in this version
-                buildCellModelArray[.information] = [InformationCellViewModel(title: "🧊 Be cautious 🧊", description: "Temperatures are below zero, roads may be iced over!", level: .warning)]
+                buildInformationModelArray.append( InformationCellViewModel(title: "🧊 Be cautious 🧊", description: "Temperatures are below zero, roads may be iced over!", level: .warning))
             } else {
-                // we have one warning only in this version
-                buildCellModelArray[.information] = [InformationCellViewModel(title: "🧥 Get a coat 🧥", description: "Temperatures are below 10°C, you might get a cold.", level: .info)]
+                buildInformationModelArray.append( InformationCellViewModel(title: "🧥 Get a coat 🧥", description: "Temperatures are below 10°C, you might get a cold.", level: .info))
             }
         }
+        for information in informationArray {
+            buildInformationModelArray.append( InformationCellViewModel(title: information.0, description: information.1, level: .info))
+        }
+        buildCellModelArray[.information] = buildInformationModelArray
         cellViewModels = buildCellModelArray
     }
     
@@ -84,15 +72,41 @@ class WeatherDisplayerViewModel {
         }
     }
     
+    private func updateLocationDisplay(location: String) {
+        
+    }
+    
+    private var informationArray: [(String, String)] = Array()
     
     private var cellViewModels: [CellType: [WeatherDisplayCellViewModelProtocol]] = Dictionary() {
         didSet {
             self.reloadTableViewClosure?()
         }
     }
-    
+
+    // MARK: - Properties
     var weatherManager: WeatherManager
     var reloadTableViewClosure: (() -> ())?
+    
+    // MARK: - Methods
+
+    init() {
+        // Improvement: switch location manager to make specific requests (see BoundTF)
+        let predictionManager = PredictionManager()
+        let locationManagerDelegate = MapManagerDelegate(didUpdateLocation: {
+            locationString in print("Updated location to \(predictionManager.changeLocation(location: locationString) ?? " no location").")
+        })
+        let locationManager = MapManager(delegate: locationManagerDelegate)
+        weatherManager = WeatherManager(predictionManager: predictionManager, locationManager: locationManager)
+        weatherManager.errorClosure = errorFetchClosure
+        weatherManager.weatherDataClosure = dataFetchClosure
+        // will silently launch an initial update
+        // there is a microscopic chance that the closure isn't yet set when it comes back
+        // in that unlikely scenario, a manual request will trigger the display anyway
+        weatherManager.getWeatherInformation() {
+            
+        }
+    }
     
     func getRows(for section: Int ) throws -> Int {
         
@@ -135,7 +149,13 @@ class WeatherDisplayerViewModel {
         }
     }
     
-    static private let mf = MeasurementFormatter()
+    func temperatureKelvinToCelsius(kelvin: Double) -> Double {
+        let kelvin = Measurement(value: kelvin, unit: UnitTemperature.kelvin)
+        let celsius = kelvin.converted(to: .celsius)
+        return celsius.value
+    }
+    
+    // MARK: - static properties
     
     static func temperatureFormatter(temperature: Double, from inputTempType: UnitTemperature, to outputTempType: UnitTemperature) -> String {
         WeatherDisplayerViewModel.mf.numberFormatter.maximumFractionDigits = 0
@@ -145,10 +165,8 @@ class WeatherDisplayerViewModel {
         return WeatherDisplayerViewModel.mf.string(from: output)
     }
     
-    func temperatureKelvinToCelsius(kelvin: Double) -> Double {
-        let kelvin = Measurement(value: kelvin, unit: UnitTemperature.kelvin)
-        let celsius = kelvin.converted(to: .celsius)
-        return celsius.value
+    // MARK: - Member public enums
+    enum WeatherDisplayerError: Error {
+        case NonExistingSection
     }
-    
 }
