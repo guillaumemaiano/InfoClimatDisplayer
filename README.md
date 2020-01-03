@@ -12,5 +12,5 @@ It also attributes the weather data according to the InfoClimat.fr API terms and
 
 ## Screen captures
 
-![Imgur](https://imgur.com/a/zmmIELp)
+![Imgur](https://i.imgur.com/76XIlya.jpg)
 
